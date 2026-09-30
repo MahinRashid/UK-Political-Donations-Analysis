@@ -1,0 +1,14 @@
+issue,rows_affected,action
+AcceptedDate: day and month swapped by Excel,21624,Swapped day and month back on every Excel-converted cell
+ReceivedDate: day and month swapped by Excel,22264,Swapped day and month back on every Excel-converted cell
+ReportedDate: day and month swapped by Excel,6399,Swapped day and month back on every Excel-converted cell
+AcceptedDate missing,1013,"Used ReceivedDate instead; if both missing, used ReportedDate"
+Donation value is £0,6,Kept (mostly aggregated or returned entries); they do not affect totals
+Same donor spelled several ways,18815,Merged 942 donors by normalised name
+Same donor under several DonorIds,5208,Did not use DonorId as a donor key
+DonorName missing,85,Labelled 'Unknown donor'
+Public money recorded as donations (e.g. House of Commons 'Short Money'),1726,Flagged is_public_funds; excluded from private-donation analysis
+"Donation returned, forfeited or deferred",283,Flagged is_returned; excluded from accepted totals
+RegisterName missing,1231,Labelled 'Not recorded'
+Postcode missing,30265,"Not used for mapping: missing for half the rows, and often a party HQ address"
+Reported before the donation date,444,Flagged lag_status = 'Date error'; excluded from lag statistics

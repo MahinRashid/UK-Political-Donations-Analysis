@@ -1,0 +1,6 @@
+.venv/
+.DS_Store
+donations.db
+data/clean/donations_clean.csv
+tableau/data/
+.ipynb_checkpoints/

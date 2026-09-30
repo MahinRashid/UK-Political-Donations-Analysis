@@ -1,0 +1,26 @@
+slice                            donations  gbp_m 
+-------------------------------  ---------  ------
+All records                      65278      1092.0
+Public funds (e.g. Short Money)  1726       164.3 
+Returned / forfeited             283        0.8   
+To non-party recipients          8205       129.9 
+Private donations to parties     55064      796.9 
+donor_name                                     donor_status                gbp_m  donations
+---------------------------------------------  --------------------------  -----  ---------
+Unite the Union                                Trade Union                 39.7   653      
+UNISON                                         Trade Union                 34.3   1458     
+GMB                                            Trade Union                 30.3   1443     
+Union of Shop Distributive and Allied Workers  Trade Union                 22.2   771      
+Communication Workers Union CWU                Trade Union                 13.4   1187     
+Lord David Sainsbury                           Individual                  10.7   14       
+National Conservative Draws Society            Unincorporated Association  9.0    61       
+Amicus                                         Trade Union                 8.4    450      
+THE JOSEPH ROWNTREE REFORM TRUST LIMITED       Company                     8.4    264      
+Transport and General Workers Union            Trade Union                 7.0    295      
+gift_size       donations  pct_of_donations  pct_of_value
+--------------  ---------  ----------------  ------------
+1. Under £7.5k  40510      73.6              12.1        
+2. £7.5k–50k    11178      20.3              21.8        
+3. £50k–100k    1899       3.4               13.6        
+4. £100k–500k   1295       2.4               32.2        
+5. £500k+       182        0.3               20.4        

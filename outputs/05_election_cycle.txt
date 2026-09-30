@@ -1,0 +1,22 @@
+period                      quarters  avg_gbp_m_per_quarter
+--------------------------  --------  ---------------------
+General-election quarter    5         27.6                 
+Quarter before an election  5         16.8                 
+Other quarters              65        8.8                  
+quarter  gbp_m
+-------  -----
+2017Q2   58.4 
+2015Q1   31.0 
+2010Q2   27.7 
+2015Q2   20.9 
+2005Q1   20.6 
+2014Q4   20.5 
+2010Q1   19.5 
+2001Q2   18.5 
+recipient             gbp_m
+--------------------  -----
+The In Campaign Ltd   24.2 
+Vote Leave Limited    19.7 
+Leave.EU Group Ltd    6.4  
+Grassroots Out Ltd    2.6  
+Conservatives IN Ltd  1.8  

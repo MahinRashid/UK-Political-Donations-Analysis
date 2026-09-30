@@ -1,0 +1,8 @@
+party              donors  top1_pct  top_donor                                 top10_pct  hhi   
+-----------------  ------  --------  ----------------------------------------  ---------  ------
+SNP                185     18.0      Brian Souter                              72.0       1055.0
+Labour             2655    14.0      Unite the Union                           60.0       575.0 
+UKIP               448     13.0      Highstone Group Ltd                       55.0       403.0 
+Green              231     8.0       Mrs Vivienne Westwood                     45.0       287.0 
+Liberal Democrats  3741    11.0      THE JOSEPH ROWNTREE REFORM TRUST LIMITED  29.0       182.0 
+Conservative       7424    2.0       National Conservative Draws Society       13.0       34.0  

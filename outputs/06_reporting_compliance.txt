@@ -1,0 +1,37 @@
+lag_status        donations  pct   gbp_m 
+----------------  ---------  ----  ------
+Within ~4 months  61005      93.5  1022.7
+4-12 months       3386       5.2   59.0  
+Date error        444        0.7   2.0   
+Over a year       422        0.6   7.9   
+Unknown           21         0.0   0.3   
+recipient_type         donations  over_a_year  pct_over_4_months
+---------------------  ---------  -----------  -----------------
+Permitted Participant  1024       40           61.3             
+Third Party            204        17           44.1             
+Political Party        56582      296          5.0              
+Regulated Donee        7024       69           3.7              
+year  over_a_year
+----  -----------
+2001  2          
+2002  1          
+2003  2          
+2004  1          
+2005  2          
+2006  1          
+2007  3          
+2008  10         
+2009  25         
+2010  35         
+2011  20         
+2012  16         
+2013  25         
+2014  52         
+2015  97         
+2016  49         
+2017  66         
+2018  15         
+donation_type        donations  returned_or_forfeited  gbp_k
+-------------------  ---------  ---------------------  -----
+Impermissible Donor  260        260                    800.0
+Unidentified Donor   23         23                     49.0 
