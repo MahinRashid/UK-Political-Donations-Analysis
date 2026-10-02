@@ -2,7 +2,7 @@
 
 **Tools:** Python (pandas) · SQL (SQLite) · Tableau Public
 **Data:** [Electoral Commission](https://www.electoralcommission.org.uk/) register of donations: 65,278 records, £1.09 billion, Jan 2001 – Sep 2019
-**Interactive dashboard:** [Tableau Public](https://public.tableau.com/app/profile/nishad.rashid.mahi)
+**Interactive dashboard:** [open the live dashboard on Tableau Public](https://public.tableau.com/app/profile/nishad.rashid.mahi/viz/DonationsAcceptedbyPoliticalPartiesinGreatBritainUpdated/WhoFundsUKPoliticalParties2)
 
 ![Tableau dashboard: Who funds UK political parties?](tableau/screenshots/1_funding.png)
 
@@ -196,7 +196,7 @@ For **any organisation that depends on donations** (a party finance team, a char
 
 ## 10. Dashboard
 
-Two interactive dashboards on [Tableau Public](https://public.tableau.com/app/profile/nishad.rashid.mahi), built from one cleaned data file (`tableau/data/donations.csv`, produced by `sql/07_tableau_exports.sql`).
+Two interactive dashboards on [Tableau Public](https://public.tableau.com/app/profile/nishad.rashid.mahi/viz/DonationsAcceptedbyPoliticalPartiesinGreatBritainUpdated/WhoFundsUKPoliticalParties2), built from one cleaned data file (`tableau/data/donations.csv`, produced by `sql/07_tableau_exports.sql`).
 
 **Dashboard 1: Who funds the parties?** Click a party in the funding-mix chart to filter its top donors and its money over time. A year slider and donor-type filter sit in the banner, and a button switches the whole report between dark and light mode.
 
