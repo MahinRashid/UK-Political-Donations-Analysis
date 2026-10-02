@@ -8,6 +8,20 @@
 
 **Purpose:** turn a raw public register into evidence a regulator, journalist or party finance team could act on: what the data can be trusted for, where each party's money comes from, how exposed each party is to losing a few donors, and whether donations are reported on time.
 
+**The difference this analysis made**
+
+Taken at face value, the published register tells a misleading story. Here is what changed once the data was audited and cleaned:
+
+| Question | Raw data says | After my analysis |
+|---|---|---|
+| How much was donated to parties? | £1.09 billion of "donations" | **£797M** in private donations to parties. 27% of the register is public money, money to campaigns and individual politicians, or returned gifts |
+| Who is the biggest donor? | The House of Commons (£67.5M) | **Unite the Union (£39.7M).** The House of Commons figure is public funding, not a donation |
+| How many reports look impossible (filed before the donation)? | 9,800 | **444.** Excel had silently swapped day and month on 33% of dates |
+| How many donations were reported over a year late? | 1,336 | **422.** Two-thirds of the apparent delays were the date bug |
+| Who are the top donors? | Split across spelling variants ("Unite The Union", "UNITE the union") | **942 donors merged (£386M).** The Communication Workers Union moves from 8th to 5th |
+| How dependent is each party on a few donors? | Not measurable from the raw file | **SNP 72%, Labour 60%, UKIP 55%** of private money from their top 10 donors; Conservatives 13% |
+| How many records were lost in cleaning? | n/a | **None.** All 65,278 records kept; every gap handled by type and documented |
+
 **What this project demonstrates**
 
 | Skill | Where to see it |
@@ -184,7 +198,7 @@ For **any organisation that depends on donations** (a party finance team, a char
 
 Two interactive dashboards on [Tableau Public](https://public.tableau.com/app/profile/nishad.rashid.mahi), built from one cleaned data file (`tableau/data/donations.csv`, produced by `sql/07_tableau_exports.sql`).
 
-**Dashboard 1: Who funds the parties?** Click a party in the funding-mix chart to filter its top donors and its money over time. A year slider and donor-type filter sit in the banner.
+**Dashboard 1: Who funds the parties?** Click a party in the funding-mix chart to filter its top donors and its money over time. A year slider and donor-type filter sit in the banner, and a button switches the whole report between dark and light mode.
 
 ![Who funds UK political parties dashboard](tableau/screenshots/1_funding.png)
 
@@ -197,6 +211,7 @@ Two interactive dashboards on [Tableau Public](https://public.tableau.com/app/pr
 - **No party colours.** In UK politics almost every strong colour belongs to a party, so the palette uses hues no major party owns, and parties are named on their bars instead. All colours passed a colour-blindness check.
 - **Big numbers first, detail below**, on a fixed 1200 × 800 layout.
 - **One data source**, so the click-to-filter interaction needs no blending.
+- **Dark and light versions** of both dashboards, linked by a toggle button, so the report works on screen and in print.
 - Planned first as a mockup ([`tableau/dashboard_blueprint.html`](tableau/dashboard_blueprint.html)) and built from a step-by-step guide ([`tableau/build_walkthrough.html`](tableau/build_walkthrough.html)). Download either file and open it in a browser.
 
 ## How to run
