@@ -212,6 +212,14 @@ Two interactive dashboards on [Tableau Public](https://public.tableau.com/app/pr
 - **Big numbers first, detail below**, on a fixed 1200 × 800 layout.
 - **One data source**, so the click-to-filter interaction needs no blending.
 - **Dark and light versions** of both dashboards, linked by a toggle button, so the report works on screen and in print.
+
+<details>
+<summary><b>Light mode</b> (click to expand)</summary>
+
+![Who funds UK political parties, light mode](tableau/screenshots/1_funding_light.png)
+
+![Can the donations data be trusted, light mode](tableau/screenshots/2_trust_light.png)
+</details>
 - Planned first as a mockup ([`tableau/dashboard_blueprint.html`](tableau/dashboard_blueprint.html)) and built from a step-by-step guide ([`tableau/build_walkthrough.html`](tableau/build_walkthrough.html)). Download either file and open it in a browser.
 
 ## How to run
