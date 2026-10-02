@@ -1,5 +1,7 @@
 # Tableau Public Build Guide
 
+> **Using Tableau Public in the browser?** Follow the step-by-step walkthrough in [`build_walkthrough.html`](build_walkthrough.html) instead. It uses a single data file (`tableau/data/donations.csv`) with most fields pre-calculated.
+
 This guide builds two dashboards from the tables in `tableau/data/`. They're created by `./run_all.sh`, which you need to run once before starting.
 
 | File | What it holds |

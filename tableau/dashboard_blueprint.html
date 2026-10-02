@@ -1,0 +1,385 @@
+<title>Political Donations Dashboard Blueprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,600&display=swap">
+<style>
+  /* Layout: a fixed 1200x800 Tableau canvas scaled to fit, with numbered markers keyed to build cards below.
+     Single light look on purpose: it mirrors the published Tableau dashboard, which is light. */
+  :root {
+    --page: #e9ecf0;
+    --canvas: #f3f5f7;
+    --card: #ffffff;
+    --line: #dfe3e8;
+    --grid: #edf0f3;
+    --ink: #1a2230;
+    --ink-2: #4f5968;
+    --muted: #858d99;
+    --header: #1d2733;
+    --indigo: #3b5fb0;
+    --teal: #0f9488;
+    --ochre: #c7851a;
+    --other: #a3a7ae;
+    --brick: #b5483a;
+    --indigo-soft: #e8edf8;
+    --brick-soft: #f6e6e3;
+    --ochre-soft: #f8eedd;
+    --teal-soft: #e0f2f0;
+    --sans: "Source Sans 3", "Tableau Book", "Segoe UI", system-ui, sans-serif;
+    --serif: "Source Serif 4", Georgia, serif;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--page); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.5; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 56px; display: flex; flex-direction: column; gap: 22px; }
+  .intro h1 { margin: 0; font-family: var(--serif); font-size: 30px; line-height: 1.2; font-weight: 600; text-wrap: balance; }
+  .intro p { margin: 8px 0 0; color: var(--ink-2); max-width: 70ch; }
+  .eyebrow { font-size: 12px; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tab { border: 1px solid var(--line); background: var(--card); color: var(--ink-2); font: inherit; font-size: 14px; font-weight: 600; padding: 7px 14px; border-radius: 6px; cursor: pointer; }
+  .tab:hover { border-color: var(--indigo); color: var(--ink); }
+  .tab[aria-selected="true"] { background: var(--header); border-color: var(--header); color: #fff; }
+  .tab:focus-visible, .toggle input:focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; }
+  .pal { display: flex; gap: 6px; align-items: center; font-size: 14px; color: var(--ink-2); }
+  .toggle { display: flex; align-items: center; gap: 8px; color: var(--ink-2); font-size: 14px; cursor: pointer; }
+
+  .stage { --c-canvas: #0e1524; --c-card: #18233a; --c-line: #26324b; --c-ink: #e8ecf4; --c-ink2: #a9b3c6; --c-muted: #7d879b; --c-head: #0a0f1c; --c-head-ink: #fff; --c-head-sub: #8d98ad; --c-chip: #141d31; --c-chip-line: #2a3754; --c-rule: #c7851a;
+    width: 100%; max-width: 1200px; position: relative; overflow: hidden; border-radius: 4px; box-shadow: 0 1px 2px rgba(29,39,51,.08), 0 10px 30px rgba(29,39,51,.10); }
+  .db { width: 1200px; height: 800px; transform-origin: top left; position: absolute; top: 0; left: 0; background: var(--c-canvas); color: var(--c-ink); display: flex; flex-direction: column; }
+  .db-head { background: var(--c-head); color: var(--c-head-ink); border-bottom: 3px solid var(--c-rule); padding: 14px 22px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex: none; }
+  .db-head h2 { margin: 0; font-family: var(--serif); font-size: 22px; font-weight: 600; }
+  .db-head span { font-size: 12.5px; color: var(--c-head-sub); }
+  .chips { display: flex; gap: 8px; }
+  .chip-f { background: var(--c-chip); border: 1px solid var(--c-chip-line); border-radius: 4px; padding: 3px 10px; font-size: 12px; min-width: 132px; display: flex; flex-direction: column; }
+  .chip-f small { font-size: 9.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--c-head-sub); }
+  .db-body { flex: 1; padding: 12px 16px 14px; display: grid; gap: 10px; min-height: 0; }
+  .row { display: grid; gap: 10px; min-height: 0; }
+  .ban { background: var(--c-card); border: 1px solid var(--c-line); border-radius: 6px; padding: 10px 16px; position: relative; display: flex; flex-direction: column; gap: 1px; border-top: 3px solid var(--c-s1); }
+  .ban.warn { border-top-color: var(--c-focus); }
+  .ban.bad { border-top-color: var(--c-bad); }
+  .ban.good { border-top-color: var(--c-good); }
+  .ban b { font-size: 28px; font-weight: 700; line-height: 1.15; font-variant-numeric: tabular-nums; }
+  .ban small { font-size: 12px; color: var(--c-ink2); font-weight: 600; }
+  .ban em { font-style: normal; font-size: 11.5px; color: var(--c-muted); }
+  .v { background: var(--c-card); border: 1px solid var(--c-line); border-radius: 6px; padding: 10px 14px 6px; position: relative; display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+  .v h3 { margin: 0; font-size: 14px; font-weight: 700; line-height: 1.3; }
+  .v .sub { font-size: 11.5px; color: var(--c-muted); }
+  .v svg { display: block; flex: 1; min-height: 0; width: 100%; }
+  .legend { display: flex; gap: 14px; font-size: 11.5px; color: var(--c-ink2); margin-top: 4px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+  .badge { position: absolute; top: -9px; left: -9px; width: 22px; height: 22px; border-radius: 50%; background: #e0457b; color: #fff; font-size: 11.5px; font-weight: 700; display: grid; place-items: center; box-shadow: 0 0 0 2px var(--c-canvas); z-index: 2; }
+  .hide-badges .badge { display: none; }
+  svg text { font-family: var(--sans); }
+  .hint { font-size: 11px; color: var(--c-muted); font-style: italic; }
+
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .panel h2 { margin: 0; font-family: var(--serif); font-size: 21px; font-weight: 600; }
+  .panel > p { margin: 0; color: var(--ink-2); max-width: 75ch; }
+  .steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+  .step { border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .step-top { display: flex; gap: 10px; align-items: center; }
+  .step-top .n { flex: none; width: 24px; height: 24px; border-radius: 50%; background: #e0457b; color: #fff; font-weight: 700; font-size: 12px; display: grid; place-items: center; }
+  .step-top b { font-size: 15px; }
+  .shelf { display: flex; gap: 8px; font-size: 13px; align-items: baseline; }
+  .shelf span { flex: none; width: 70px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+  code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; background: var(--canvas); border: 1px solid var(--line); padding: 1px 6px; border-radius: 4px; overflow-wrap: anywhere; }
+  .fmt { margin: 0; font-size: 13px; color: var(--ink-2); }
+
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; }
+  .sw { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; }
+  .sw .chipc { height: 54px; }
+  .sw div.t { padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+  .sw div.t b { font-size: 14px; }
+  .sw div.t span { color: var(--ink-2); }
+  .avoid { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; color: var(--ink-2); }
+  .avoid i { display: inline-block; width: 22px; height: 14px; border-radius: 3px; vertical-align: -2px; }
+  pre.tps { margin: 0; background: #1d2733; color: #e6ebf1; padding: 14px; border-radius: 6px; font-size: 12.5px; overflow-x: auto; }
+  .rules { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .rule { border: 1px solid var(--line); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; gap: 6px; }
+  .rule b { font-size: 15px; }
+  .rule p { margin: 0; font-size: 13.5px; color: var(--ink-2); }
+
+  body.clean { background: var(--c-canvas, #0e1524); }
+  body.clean .wrap { padding: 0; max-width: none; gap: 0; }
+  body.clean .intro, body.clean .toolbar, body.clean .panel { display: none; }
+  body.clean .stage { border-radius: 0; box-shadow: none; }
+  @media (prefers-reduced-motion: no-preference) { .tab { transition: background .15s, color .15s; } }
+</style>
+
+<div class="wrap">
+  <header class="intro">
+    <div class="eyebrow">Tableau Public · Portfolio project</div>
+    <h1>Who Funds UK Political Parties? Dashboard blueprint</h1>
+    <p>Two dashboards built from the Electoral Commission donations register, 2001–2019. Every number is from the cleaned data. Orange markers on each dashboard match the build cards below it.</p>
+  </header>
+
+  <div class="toolbar">
+    <div class="tabs" role="tablist" aria-label="Dashboards" id="tabs"></div>
+    <div class="pal" role="group" aria-label="Colour palette" id="pals"><span>Palette:</span></div>
+    <label class="toggle"><input type="checkbox" id="markers" checked> Show build markers</label>
+  </div>
+
+  <div class="stage" id="stage"><div class="db" id="db"></div></div>
+
+  <section class="panel" id="steps" aria-live="polite"></section>
+
+  <section class="panel">
+    <div id="palette-panel"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Design rules for both dashboards</h2>
+    <div class="rules">
+      <div class="rule"><b>Titles state the finding</b><p>"SNP, Labour and UKIP get over half their money from 10 donors", not "Top 10 share by party".</p></div>
+      <div class="rule"><b>Big numbers first</b><p>A row of 4 BANs (big-number text sheets) answers "how much?" before the charts answer "why?"</p></div>
+      <div class="rule"><b>Fonts</b><p>Format → Workbook: Tableau Semibold for titles (14pt), Tableau Book for everything else (11pt labels, 9pt axes).</p></div>
+      <div class="rule"><b>Tiled layout</b><p>Fixed size 1200 × 800. Horizontal and vertical containers, 8px outer padding, white sheet backgrounds on a #F3F5F7 dashboard.</p></div>
+      <div class="rule"><b>Labels, not gridlines</b><p>Show mark labels. On bar charts, remove gridlines, zero lines and the value axis.</p></div>
+      <div class="rule"><b>Neutral wording</b><p>Describe patterns, never judge a party or donor. The subject is political, so neutrality is part of the quality.</p></div>
+    </div>
+  </section>
+</div>
+
+<script>
+const THEMES = {
+  midnight: {
+    name: "Midnight Ledger", mood: "Dark and premium: jewel tones on deep navy, with a bronze rule under the header. Stands out in the Tableau Public gallery.",
+    vars: { "--c-canvas": "#0e1524", "--c-card": "#18233a", "--c-line": "#26324b", "--c-ink": "#e8ecf4", "--c-ink2": "#a9b3c6", "--c-muted": "#7d879b", "--c-head": "#0a0f1c", "--c-head-ink": "#ffffff", "--c-head-sub": "#8d98ad", "--c-chip": "#141d31", "--c-chip-line": "#2a3754", "--c-rule": "#c7851a" },
+    s1: "#7a74f0", s2: "#12a594", s3: "#c7851a", other: "#5b6679", focus: "#c7851a", bad: "#e0607e", good: "#12a594",
+    ink: "#e8ecf4", ink2: "#a9b3c6", muted: "#7d879b", grid: "#223050", axis: "#34425f",
+    roles: [["Periwinkle", "#7a74f0", "Default colour for single-series charts · Individual donors"], ["Teal", "#12a594", "Company donors · good outcomes"], ["Bronze gold", "#c7851a", "Trade unions · 'focus here' highlights · header rule"], ["Slate", "#5b6679", "Other · context bars"], ["Rose", "#e0607e", "Problems only (dashboard 2), always with a label"], ["Midnight", "#0e1524", "Dashboard background · cards #18233A · header #0A0F1C"]],
+  },
+  aubergine: {
+    name: "Aubergine & Coral", mood: "Light and vivid: violet, coral and teal under a deep aubergine header. Bold but still reads like a professional report.",
+    vars: { "--c-canvas": "#f5f3f8", "--c-card": "#ffffff", "--c-line": "#e6e1ee", "--c-ink": "#1f1530", "--c-ink2": "#56496b", "--c-muted": "#8b8099", "--c-head": "#2b1840", "--c-head-ink": "#ffffff", "--c-head-sub": "#bfb2d3", "--c-chip": "#3a2554", "--c-chip-line": "#4d3569", "--c-rule": "#e8703f" },
+    s1: "#6b4fd0", s2: "#e8703f", s3: "#0a9e86", other: "#b8b2c4", focus: "#e8703f", bad: "#c2255c", good: "#0a9e86",
+    ink: "#1f1530", ink2: "#56496b", muted: "#8b8099", grid: "#efebf4", axis: "#d6cfe0",
+    roles: [["Violet", "#6b4fd0", "Default colour for single-series charts · Individual donors"], ["Coral", "#e8703f", "Company donors · 'focus here' highlights · header rule"], ["Teal", "#0a9e86", "Trade unions · good outcomes"], ["Lilac grey", "#b8b2c4", "Other · context bars"], ["Raspberry", "#c2255c", "Problems only (dashboard 2), always with a label"], ["Aubergine", "#2b1840", "Header band · page background #F5F3F8 · cards white"]],
+  },
+};
+let T = THEMES.midnight;
+const C = {};
+function applyTheme(key) {
+  T = THEMES[key];
+  Object.assign(C, { indigo: T.s1, teal: T.s2, ochre: T.s3, other: T.other, brick: T.bad, focus: T.focus, ink: T.ink, ink2: T.ink2, muted: T.muted, grid: T.grid, axis: T.axis });
+  for (const [k, v] of Object.entries(T.vars)) stage.style.setProperty(k, v);
+  stage.style.setProperty("--c-s1", T.s1); stage.style.setProperty("--c-focus", T.focus); stage.style.setProperty("--c-bad", T.bad); stage.style.setProperty("--c-good", T.good);
+  document.body.style.setProperty("--c-canvas", T.vars["--c-canvas"]);
+}
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+const m = v => "£" + v.toFixed(1) + "M";
+
+function hbars({ w, h, data, max, label, color, lw = 130, rw = 70, top = 4 }) {
+  const rowH = (h - top) / data.length, bh = Math.min(rowH * 0.64, 20), iw = w - lw - rw;
+  let s = `<svg viewBox="0 0 ${w} ${h}" role="img">`;
+  data.forEach((d, i) => {
+    const y = top + i * rowH + (rowH - bh) / 2, bw = Math.max(d.v / max * iw, 2);
+    s += `<text x="${lw - 8}" y="${y + bh / 2 + 4}" text-anchor="end" font-size="11.5" fill="${C.ink2}">${esc(d.k)}</text>`;
+    s += `<path d="M${lw},${y} h${bw - 3} q3,0 3,3 v${bh - 6} q0,3 -3,3 h${-(bw - 3)} Z" fill="${color(d, i)}"/>`;
+    s += `<text x="${lw + bw + 6}" y="${y + bh / 2 + 4}" font-size="11.5" font-weight="600" fill="${C.ink}">${label(d)}</text>`;
+  });
+  return s + `</svg>`;
+}
+
+function stacked({ w, h, rows, keys, colors, lw = 170 }) {
+  const top = 4, rowH = (h - top) / rows.length, bh = Math.min(rowH * 0.62, 24), iw = w - lw - 6;
+  let s = `<svg viewBox="0 0 ${w} ${h}" role="img">`;
+  rows.forEach((r, i) => {
+    const y = top + i * rowH + (rowH - bh) / 2; let x = lw;
+    s += `<text x="${lw - 8}" y="${y + bh / 2 + 4}" text-anchor="end" font-size="11.5" fill="${C.ink2}">${esc(r.k)} <tspan fill="${C.muted}">£${r.t}M</tspan></text>`;
+    keys.forEach((k, j) => {
+      const v = r.v[j] / 100, bw = v * iw;
+      if (bw <= 0) return;
+      s += `<rect x="${x}" y="${y}" width="${Math.max(bw - 2, 1)}" height="${bh}" fill="${colors[j]}"/>`;
+      if (v >= 0.1) s += `<text x="${x + bw / 2}" y="${y + bh / 2 + 4}" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">${r.v[j]}%</text>`;
+      x += bw;
+    });
+  });
+  return s + `</svg>`;
+}
+
+function line({ w, h, vals }) {
+  const pad = { t: 16, b: 22, l: 40, r: 10 }, ih = h - pad.t - pad.b, iw = w - pad.l - pad.r, max = 64;
+  const x = i => pad.l + i / (vals.length - 1) * iw, y = v => pad.t + ih - v / max * ih;
+  let s = `<svg viewBox="0 0 ${w} ${h}" role="img">`;
+  for (const t of [0, 20, 40, 60]) {
+    s += `<line x1="${pad.l}" x2="${w - pad.r}" y1="${y(t)}" y2="${y(t)}" stroke="${t ? C.grid : C.axis}"/>`;
+    s += `<text x="${pad.l - 6}" y="${y(t) + 3.5}" text-anchor="end" font-size="10" fill="${C.muted}">£${t}M</text>`;
+  }
+  s += `<line x1="${pad.l}" x2="${w - pad.r}" y1="${y(9)}" y2="${y(9)}" stroke="${C.muted}" stroke-dasharray="4 3"/>`;
+  const pts = vals.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+  s += `<polygon points="${x(0)},${y(0)} ${pts} ${x(vals.length - 1)},${y(0)}" fill="${C.indigo}" opacity=".14"/>`;
+  s += `<polyline points="${pts}" fill="none" stroke="${C.indigo}" stroke-width="2" stroke-linejoin="round"/>`;
+  const el = { 2001: 1, 2005: 17, 2010: 37, 2015: 57, 2017: 65 };
+  for (const [yr, i] of Object.entries(el)) {
+    s += `<circle cx="${x(i)}" cy="${y(vals[i])}" r="4.5" fill="${C.focus}" stroke="${T.vars["--c-card"]}" stroke-width="1.5"/>`;
+    const dx = yr === "2015" ? 12 : yr === "2005" ? 10 : 0;
+    s += `<text x="${x(i) + dx}" y="${y(vals[i]) - 8}" text-anchor="${dx ? "start" : "middle"}" font-size="10" fill="${C.ink2}">${yr}</text>`;
+  }
+  for (let yr = 2002; yr <= 2018; yr += 4) s += `<text x="${x((yr - 2001) * 4)}" y="${pad.t + ih + 15}" text-anchor="middle" font-size="10" fill="${C.muted}">${yr}</text>`;
+  return s + `</svg>`;
+}
+
+function pairs({ w, h, rows, lw = 90 }) {
+  const top = 2, rowH = (h - top) / rows.length, bh = Math.min(rowH * 0.34, 11), iw = w - lw - 44;
+  let s = `<svg viewBox="0 0 ${w} ${h}" role="img">`;
+  rows.forEach((r, i) => {
+    const y = top + i * rowH + rowH / 2;
+    s += `<text x="${lw - 8}" y="${y + 4}" text-anchor="end" font-size="11.5" fill="${C.ink2}">${esc(r.k)}</text>`;
+    const a = Math.max(r.c / 80 * iw, 1.5), b = Math.max(r.v / 80 * iw, 1.5);
+    s += `<rect x="${lw}" y="${y - bh - 1}" width="${a}" height="${bh}" rx="2" fill="${C.other}"/>`;
+    s += `<text x="${lw + a + 5}" y="${y - 2}" font-size="10.5" fill="${C.ink2}">${r.c}%</text>`;
+    s += `<rect x="${lw}" y="${y + 1}" width="${b}" height="${bh}" rx="2" fill="${C.indigo}"/>`;
+    s += `<text x="${lw + b + 5}" y="${y + bh}" font-size="10.5" font-weight="700" fill="${C.ink}">${r.v}%</text>`;
+  });
+  return s + `</svg>`;
+}
+
+const Q = [3.3,18.5,3.7,2.8,5.6,4.0,4.1,3.5,7.0,4.9,3.7,7.0,5.6,9.2,7.3,10.0,20.6,12.7,5.3,5.9,11.1,9.0,7.3,9.4,10.0,11.5,9.8,16.8,8.3,11.0,13.7,9.5,10.0,13.5,9.8,17.4,19.5,27.7,7.4,6.8,9.1,8.7,10.1,6.9,8.9,7.9,7.1,7.3,9.2,8.6,7.9,10.0,14.8,15.6,15.2,20.5,31.0,20.9,6.2,9.3,12.1,15.4,6.6,7.8,9.6,58.4,6.5,6.8,7.1,8.6,8.7,10.6,6.9,12.3];
+
+const ban = (n, v, label, note, cls = "") => `<div class="ban ${cls}"><span class="badge">${n}</span><small>${label}</small><b>${v}</b><em>${note}</em></div>`;
+const vis = (n, title, sub, inner, extra = "") => `<div class="v"><span class="badge">${n}</span><h3>${title}</h3><div class="sub">${sub}</div>${inner}${extra}</div>`;
+const legend = items => `<div class="legend">${items.map(([k, c]) => `<span><i style="background:${c}"></i>${k}</span>`).join("")}</div>`;
+
+const DASH = [
+  {
+    id: "funding", name: "1. Who funds the parties?",
+    title: "Who Funds UK Political Parties?", sub: "Electoral Commission register · private donations accepted by parties · 2001 – 2019",
+    chips: [["Years", "2001 – 2019"], ["Party", "All"], ["Donor type", "All"]],
+    rows: "84px 1fr 1fr",
+    body: () => `
+      <div class="row" style="grid-template-columns:repeat(4,1fr)">
+        ${ban(1, "£797M", "Private donations to parties", "55,064 donations")}
+        ${ban(1, "£164M", "Public money set aside", "15% of the register", "warn")}
+        ${ban(1, "3 in 6", "Parties over 50% dependent", "on their top 10 donors", "warn")}
+        ${ban(1, "3.1×", "Election-quarter uplift", "vs a typical quarter")}
+      </div>
+      <div class="row" style="grid-template-columns:1.25fr 1fr">
+        ${vis(2, "Labour runs on trade unions; the others run on individuals and companies", "Share of each party's private donations by donor type",
+          stacked({ w: 620, h: 196, keys: ["Individual", "Company", "Trade Union", "Other"], colors: [T.s1, T.s2, T.s3, T.other],
+            rows: [["Conservative", 372, [65, 28, 0, 7]], ["Labour", 285, [23, 5, 66, 6]], ["Liberal Democrats", 74, [54, 32, 0, 14]], ["UKIP", 17, [48, 51, 0, 1]], ["SNP", 13, [98, 2, 0, 0]], ["Green", 4, [92, 5, 0, 3]]].map(([k, t, v]) => ({ k, t, v })) }),
+          legend([["Individual", T.s1], ["Company", T.s2], ["Trade Union", T.s3], ["Other", T.other]]) + `<div class="hint">Click a party to filter the charts on the right and below</div>`)}
+        ${vis(3, "SNP, Labour and UKIP get over half their money from 10 donors", "Share of private donations from each party's 10 largest donors",
+          hbars({ w: 480, h: 230, max: 0.95, lw: 118, rw: 110, data: [["SNP", .72, 185], ["Labour", .60, 2655], ["UKIP", .55, 448], ["Green", .45, 231], ["Liberal Democrats", .29, 3741], ["Conservative", .13, 7424]].map(([k, v, n]) => ({ k, v, n })),
+            label: d => `${Math.round(d.v * 100)}% · ${d.n.toLocaleString("en-GB")} donors`, color: d => d.v >= 0.5 ? T.focus : T.s1 }))}
+      </div>
+      <div class="row" style="grid-template-columns:1.25fr 1fr">
+        ${vis(4, "Money follows elections: the 2017 snap election set the record", "Private donations to all parties per quarter · dots = election quarters · dashed line = median quarter, £9M",
+          line({ w: 620, h: 220, vals: Q }))}
+        ${vis(5, "Top 10 donors, all parties", "After merging donor-name spellings · £M, 2001–2019",
+          hbars({ w: 480, h: 226, max: 44, lw: 196, rw: 50, data: [["Unite the Union", 39.7, "TU"], ["UNISON", 34.3, "TU"], ["GMB", 30.3, "TU"], ["USDAW", 22.2, "TU"], ["Communication Workers Union", 13.4, "TU"], ["Lord David Sainsbury", 10.7, "I"], ["National Conservative Draws Society", 9.0, "O"], ["Amicus", 8.4, "TU"], ["Joseph Rowntree Reform Trust", 8.4, "C"], ["Transport & General Workers Union", 7.0, "TU"]].map(([k, v, t]) => ({ k, v, t })),
+            label: d => m(d.v), color: d => ({ TU: T.s3, I: T.s1, C: T.s2, O: T.other })[d.t] }))}
+      </div>`,
+    steps: [
+      { n: 1, t: "BANs (4 text sheets)", s: [["Text", "SUM(value_gbp) · COUNT(ec_ref) · Top 10 Share · uplift"], ["Filter", "Is Private Party Donation = True (first BAN)"]], f: "Marks: Text, 28pt Tableau Semibold. Put the note under the number as a second line in the Text card, 10pt grey. A 3px coloured top border comes from a thin blank object above each sheet." },
+      { n: 2, t: "Funding mix (100% stacked bar)", s: [["Rows", "recipient_group (6 main parties)"], ["Columns", "SUM(value_gbp) → Percent of total, across"], ["Colour", "Donor Type"], ["Filter", "Is Private Party Donation = True"]], f: "Sort parties by total £ descending. Label marks with the percentage, minimum 10%. Use it as the filter source: Dashboard → Actions → Filter → on Select." },
+      { n: 3, t: "Donor concentration (bar)", s: [["Source", "party_donor_totals.csv"], ["Rows", "party"], ["Columns", "Top 10 Share"], ["Colour", "IIF([Top 10 Share] >= 0.5, 'Over half', 'Under half')"]], f: "Over half = the highlight colour, Under half = the default colour. Label with the percentage plus the donor count (add COUNTD(donor_name) to Label)." },
+      { n: 4, t: "Quarterly funding (line)", s: [["Source", "quarterly_party_funding.csv"], ["Columns", "quarter (discrete)"], ["Rows", "SUM(gbp)"], ["Detail", "is_election_quarter"]], f: "Line 2px in the default colour, area fill at 10% via a dual-axis area on the same scale (synchronise axes). Analysis → Reference line → Median, dashed. Mark election quarters with a circle in the highlight colour." },
+      { n: 5, t: "Top 10 donors (bar)", s: [["Source", "party_donor_totals.csv"], ["Rows", "donor_name"], ["Columns", "SUM(gbp)"], ["Filter", "Top 10 by SUM(gbp); party from the action"], ["Colour", "donor_status (4 groups)"]], f: "Colour by donor type with the same four colours as chart 2, so colours mean the same thing everywhere. The title updates with the selected party: insert the <Party> parameter in the title." },
+    ],
+  },
+  {
+    id: "trust", name: "2. Can the data be trusted?",
+    title: "Can the Donations Data Be Trusted?", sub: "What I fixed before analysing, and how well the reporting system works · 65,278 records",
+    chips: [["Years", "2001 – 2019"], ["Recipient type", "All"], ["Register", "All"]],
+    rows: "84px 1fr 1fr",
+    body: () => `
+      <div class="row" style="grid-template-columns:repeat(4,1fr)">
+        ${ban(1, "21,624", "Dates Excel swapped", "33% of rows · fixed", "bad")}
+        ${ban(1, "942", "Donors spelled several ways", "£386M · merged", "warn")}
+        ${ban(1, "£164M", "Public money in the register", "separated from donations", "warn")}
+        ${ban(1, "283 of 283", "Impermissible gifts returned", "£849k · system working", "good")}
+      </div>
+      <div class="row" style="grid-template-columns:1fr 1fr">
+        ${vis(2, "Fixing one date bug removes 95% of the impossible records", "Donations dated as reported before they were received",
+          hbars({ w: 540, h: 150, max: 11000, lw: 160, rw: 60, top: 20, data: [["As Excel read them", 9800], ["After the fix", 444]].map(([k, v]) => ({ k, v })), label: d => d.v.toLocaleString("en-GB"), color: (d, i) => i ? C.indigo : C.brick }))}
+        ${vis(3, "£164M of the register's 'donations' is public money", "All records by where the money went · £M",
+          hbars({ w: 540, h: 170, max: 1000, lw: 210, rw: 90, data: [["Private donations to parties", 796.9], ["Public money (Short Money etc.)", 164.3], ["Campaigns, MPs, other recipients", 129.9], ["Returned or forfeited", 0.8]].map(([k, v]) => ({ k, v })),
+            label: d => `£${d.v.toFixed(1)}M`, color: (d, i) => [T.s1, T.focus, T.other, T.other][i] }))}
+      </div>
+      <div class="row" style="grid-template-columns:1fr 1fr">
+        ${vis(4, "Gifts of £100k+ are 2.7% of donations but 53% of the money", "Private donations to parties by gift size",
+          pairs({ w: 540, h: 190, rows: [["Under £7.5k", 73.6, 12.1], ["£7.5k–50k", 20.3, 21.8], ["£50k–100k", 3.4, 13.6], ["£100k–500k", 2.4, 32.2], ["£500k+", 0.3, 20.4]].map(([k, c, v]) => ({ k, c, v })) }),
+          legend([["Share of donations", C.other], ["Share of money", C.indigo]]))}
+        ${vis(5, "Referendum campaigners reported most donations late", "Share published over ~4 months after the donation date",
+          hbars({ w: 540, h: 200, max: 0.8, lw: 170, rw: 50, data: [["Permitted participant", .613], ["Third party", .466], ["Political party", .050], ["Regulated donee", .037]].map(([k, v]) => ({ k, v })),
+            label: d => Math.round(d.v * 100) + "%", color: d => d.v > 0.3 ? C.brick : C.indigo }))}
+      </div>`,
+    steps: [
+      { n: 1, t: "BANs (4 text sheets)", s: [["Text", "Typed values from data_quality_log.csv, or calculated"], ["Style", "Top border: problem colour, highlight colour or good colour"]], f: "The colour of the top border tells the reader at a glance which numbers are problems. Every BAN also says in words whether it was fixed." },
+      { n: 2, t: "Date bug before/after (bar)", s: [["Rows", "Measure Names (2 values)"], ["Columns", "Measure Values"], ["Data", "9,800 without the fix · 444 with it"]], f: "Problem colour for 'as Excel read them', default colour for 'after the fix'. This chart is the strongest proof of analyst skill in the project, so give it the top-left spot." },
+      { n: 3, t: "Where the money goes (bar)", s: [["Rows", "Money Bucket (calculated field)"], ["Columns", "SUM(value_gbp)"]], f: "Private donations in the default colour, public money in the highlight colour, the rest in the context colour. Label with £M and percent of total." },
+      { n: 4, t: "Gift size (paired bars)", s: [["Rows", "Gift Size"], ["Columns", "CNT(ec_ref) and SUM(value_gbp), each as Percent of total"], ["Filter", "Is Private Party Donation = True"]], f: "Put both measures on one axis (Measure Values), Colour: Measure Names, context colour and default colour. Same unit (%), so a single axis is honest." },
+      { n: 5, t: "Reporting delay (bar)", s: [["Rows", "recipient_type"], ["Columns", "Late %"], ["Filter", "lag_status ≠ Date error"]], f: "Problem colour for types over 30% late, default colour otherwise. Tooltip: 'Parties report quarterly, so ~4 months is the normal upper range.'" },
+    ],
+  },
+];
+
+const stage0 = document.getElementById("stage");
+function renderPalette() {
+  const tps = `<?xml version='1.0'?>\n<workbook>\n  <preferences>\n    <color-palette name="${T.name}" type="regular">\n${[T.s1, T.s2, T.s3, T.other, T.bad].map(c => `      <color>${c.toUpperCase()}</color>`).join("\n")}\n    </color-palette>\n  </preferences>\n</workbook>`;
+  document.getElementById("palette-panel").innerHTML = `
+    <h2>Colour palette: ${esc(T.name)}</h2>
+    <p>${esc(T.mood)}</p>
+    <p>Almost every strong colour in UK politics already belongs to a party, so this palette avoids party hues and nothing is ever coloured by party. Each party is named on its bar instead. It passed a colour-blindness check.</p>
+    <div class="swatches">${T.roles.map(([n, h, r]) => `<div class="sw"><div class="chipc" style="background:${h}"></div><div class="t"><b>${n} ${h.toUpperCase()}</b><span>${esc(r)}</span></div></div>`).join("")}</div>
+    <div class="avoid"><b style="color:var(--ink)">Never use as series colours:</b>
+      <span><i style="background:#E4003B"></i> Labour red</span><span><i style="background:#0087DC"></i> Conservative blue</span><span><i style="background:#FAA61A"></i> Lib Dem orange</span><span><i style="background:#FDF38E"></i> SNP yellow</span><span><i style="background:#6AB023"></i> Green</span><span><i style="background:#70147A"></i> UKIP purple</span></div>
+    <p><b>Add the palette to Tableau once.</b> Open <code>Documents/My Tableau Public Repository/Preferences.tps</code> in a text editor, replace its contents with this, save, and restart Tableau. It then appears as <i>${esc(T.name)}</i> under Edit Colors. For a dark dashboard, also set Format → Workbook shading and each sheet's background to the colours listed above.</p>
+    <pre class="tps">${esc(tps)}</pre>`;
+}
+const db = document.getElementById("db"), stage = stage0, tabs = document.getElementById("tabs"), stepsEl = document.getElementById("steps");
+
+DASH.forEach((d, i) => {
+  const b = document.createElement("button");
+  b.className = "tab"; b.role = "tab"; b.textContent = d.name;
+  b.addEventListener("click", () => show(i, true));
+  tabs.appendChild(b);
+});
+
+function show(i, push) {
+  current = i;
+  const d = DASH[i];
+  db.innerHTML = `
+    <div class="db-head"><div><h2>${d.title}</h2><span>${d.sub}</span></div>
+      <div class="chips">${d.chips.map(([k, v]) => `<div class="chip-f"><small>${k}</small>${v} ▾</div>`).join("")}</div></div>
+    <div class="db-body" style="grid-template-rows:${d.rows}">${d.body()}</div>`;
+  [...tabs.children].forEach((t, j) => t.setAttribute("aria-selected", j === i ? "true" : "false"));
+  stepsEl.innerHTML = `
+    <h2>How to build: ${esc(d.title)}</h2>
+    <p>Each card matches an orange marker on the dashboard. Calculated fields are defined in <code>tableau/TABLEAU_GUIDE.md</code>, step 2.</p>
+    <div class="steps">${d.steps.map(s => `
+      <div class="step"><div class="step-top"><span class="n">${s.n}</span><b>${esc(s.t)}</b></div>
+        ${s.s.map(([k, v]) => `<div class="shelf"><span>${k}</span><code>${esc(v)}</code></div>`).join("")}
+        <p class="fmt">${esc(s.f)}</p></div>`).join("")}</div>`;
+  if (push) { try { history.replaceState(null, "", "#" + d.id + "-" + palKey); } catch (e) {} }
+  fit();
+}
+
+function fit() {
+  const s = stage.clientWidth / 1200;
+  db.style.transform = `scale(${s})`;
+  stage.style.height = (800 * s) + "px";
+}
+let current = 0, palKey = "midnight";
+const pals = document.getElementById("pals");
+for (const [k, t] of Object.entries(THEMES)) {
+  const b = document.createElement("button");
+  b.className = "tab"; b.textContent = t.name; b.dataset.key = k;
+  b.addEventListener("click", () => setPalette(k));
+  pals.appendChild(b);
+}
+function setPalette(k) {
+  palKey = k; applyTheme(k); renderPalette();
+  [...pals.querySelectorAll("button")].forEach(b => b.setAttribute("aria-pressed", b.dataset.key === k ? "true" : "false"));
+  [...pals.querySelectorAll("button")].forEach(b => b.setAttribute("aria-selected", b.dataset.key === k ? "true" : "false"));
+  show(current, true);
+}
+const markers = document.getElementById("markers");
+markers.addEventListener("change", () => document.body.classList.toggle("hide-badges", !markers.checked));
+window.addEventListener("resize", fit);
+
+const parts = (location.hash || "").slice(1).split("-");
+if (parts.includes("clean")) document.body.classList.add("clean", "hide-badges");
+current = Math.max(0, DASH.findIndex(d => d.id === parts[0]));
+setPalette(THEMES[parts[1]] ? parts[1] : "midnight");
+</script>

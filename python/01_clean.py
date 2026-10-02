@@ -97,6 +97,11 @@ display = (df.dropna(subset=["DonorName"]).assign(DonorName=df.DonorName.str.str
            .groupby("donor_key").DonorName.agg(lambda s: s.value_counts().index[0]))
 df["donor_name"] = df.donor_key.map(display)
 note("DonorName missing", df.DonorName.isna().sum(), "Labelled 'Unknown donor'")
+note("DonorStatus missing", df.DonorStatus.isna().sum(), "Labelled 'Unknown'")
+optional = ["CampaigningName", "DonationAction", "PurposeOfVisit", "RegulatedDoneeType", "NatureOfDonation",
+            "CompanyRegistrationNumber", "AccountingUnitId", "AccountingUnitName", "IsReportedPrePoll"]
+note("Optional fields blank where they don't apply (" + ", ".join(optional) + ")", df[optional].isna().any(axis=1).sum(),
+     "Left blank: not errors (e.g. company number only exists for companies). DonationAction became the is_returned flag")
 df["donor_name"] = df.donor_name.fillna("Unknown donor")
 
 # --- Classification -----------------------------------------------------------
@@ -120,6 +125,10 @@ note("Postcode missing", df.Postcode.isna().sum(), "Not used for mapping: missin
 # --- Reporting lag ------------------------------------------------------------
 df["report_lag_days"] = (df.ReportedDate - df.donation_date).dt.days
 negative = df.report_lag_days < 0
+no_dates = df.donation_date.isna()
+note("No accepted, received or reported date", no_dates.sum(),
+     f"Kept in totals (£{df.loc[no_dates, 'value_gbp'].sum():,.0f}); left off time-based charts")
+note("ReportedDate missing", df.ReportedDate.isna().sum(), "lag_status = 'Unknown'; excluded from reporting-delay figures")
 note("Reported before the donation date", negative.sum(), "Flagged lag_status = 'Date error'; excluded from lag statistics")
 df["lag_status"] = pd.cut(df.report_lag_days, [-10**6, -1, 120, 365, 10**6],
                           labels=["Date error", "Within ~4 months", "4-12 months", "Over a year"])
@@ -157,4 +166,4 @@ clean.to_csv(OUT / "donations_clean.csv", index=False)
 pd.DataFrame(log).to_csv(OUT / "data_quality_log.csv", index=False)
 
 print(f"{n:,} donations cleaned -> {OUT / 'donations_clean.csv'}")
-print(pd.DataFrame(log).to_string(index=False))
+print(pd.DataFrame(log).to_string(index=False, justify="left", max_colwidth=70))

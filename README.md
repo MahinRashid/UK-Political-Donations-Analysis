@@ -2,6 +2,21 @@
 
 **Tools:** Python (pandas) · SQL (SQLite) · Tableau Public
 **Data:** [Electoral Commission](https://www.electoralcommission.org.uk/) register of donations: 65,278 records, £1.09 billion, Jan 2001 – Sep 2019
+**Interactive dashboard:** [Tableau Public](https://public.tableau.com/app/profile/nishad.rashid.mahi)
+
+![Tableau dashboard: Who funds UK political parties?](tableau/screenshots/1_funding.png)
+
+**Purpose:** turn a raw public register into evidence a regulator, journalist or party finance team could act on: what the data can be trusted for, where each party's money comes from, how exposed each party is to losing a few donors, and whether donations are reported on time.
+
+**What this project demonstrates**
+
+| Skill | Where to see it |
+|---|---|
+| **Data quality auditing.** Found an Excel day/month swap on 33% of dates, duplicate donor spellings and public money mislabelled as donations, and proved each one | [Section 1](#1-data-quality-audit-can-the-data-be-trusted) · [`python/01_clean.py`](python/01_clean.py) · [cleaning log](data/clean/data_quality_log.csv) |
+| **SQL analysis.** Window functions, CTEs, ranking and a concentration index (HHI) | [`sql/`](sql/) · results in [`outputs/`](outputs/) |
+| **Python and statistics.** pandas cleaning, before/after validation of every fix | [`notebooks/analysis.ipynb`](notebooks/analysis.ipynb) |
+| **Dashboard design.** Two interactive Tableau dashboards: click-to-filter by party, year slider, finding-led titles, colour-blind-safe and politically neutral palette | [Section 10](#10-dashboard) |
+| **Business communication.** Findings, recommendations with evidence, and stated limitations | [Executive summary](#executive-summary) · [Recommendations](#8-recommendations) |
 
 ---
 
@@ -54,6 +69,14 @@ I first analysed this dataset in 2024 ([original Tableau dashboard](https://publ
 | 5 | **Returned or forfeited donations** (impermissible or unidentified donors) | 283, £0.8M | Excluded from accepted totals |
 | 6 | **Reported before the donation date** (impossible) after the date fix | 444 | Flagged as date errors and excluded from delay statistics |
 | 7 | **Donor postcode missing** | 30,265 (46%) | Not used for mapping |
+
+**Missing values:** no record was deleted. All 65,278 donations stay in the totals, and each gap is handled by type:
+
+| Type of gap | Columns | Handling |
+|---|---|---|
+| Blank because the field doesn't apply | Company number (only for companies), nature of donation (only non-cash), donee type (only individual politicians), donation action (blank = accepted), and 5 others | Left blank. Filling them would invent information. Donation action became an `is_returned` flag |
+| Missing but recoverable | Accepted date (1,013), donor name (85), donor status (58), register (1,231) | Accepted date filled from received date, then reported date. Text fields labelled "Unknown" or "Not recorded" |
+| Missing and needed for one analysis | Postcode (46%), reported date (21), no date at all (4 donations, £55.7k) | Excluded only from the analysis that needs the field: no map, no reporting-delay figure, no time chart |
 
 ![Date bug](outputs/charts/01_date_bug.png)
 
@@ -159,7 +182,22 @@ For **any organisation that depends on donations** (a party finance team, a char
 
 ## 10. Dashboard
 
-*The new Tableau Public dashboard is in progress. The build guide is in [`tableau/TABLEAU_GUIDE.md`](tableau/TABLEAU_GUIDE.md).*
+Two interactive dashboards on [Tableau Public](https://public.tableau.com/app/profile/nishad.rashid.mahi), built from one cleaned data file (`tableau/data/donations.csv`, produced by `sql/07_tableau_exports.sql`).
+
+**Dashboard 1: Who funds the parties?** Click a party in the funding-mix chart to filter its top donors and its money over time. A year slider and donor-type filter sit in the banner.
+
+![Who funds UK political parties dashboard](tableau/screenshots/1_funding.png)
+
+**Dashboard 2: Can the data be trusted?** The data fixes behind the analysis, how the money splits, and how well the reporting system works.
+
+![Can the donations data be trusted dashboard](tableau/screenshots/2_trust.png)
+
+**Design decisions**
+- **Every title states the finding**, so the dashboard reads as a report, not a set of charts.
+- **No party colours.** In UK politics almost every strong colour belongs to a party, so the palette uses hues no major party owns, and parties are named on their bars instead. All colours passed a colour-blindness check.
+- **Big numbers first, detail below**, on a fixed 1200 × 800 layout.
+- **One data source**, so the click-to-filter interaction needs no blending.
+- Planned first as a mockup ([`tableau/dashboard_blueprint.html`](tableau/dashboard_blueprint.html)) and built from a step-by-step guide ([`tableau/build_walkthrough.html`](tableau/build_walkthrough.html)). Download either file and open it in a browser.
 
 ## How to run
 
@@ -182,7 +220,7 @@ This cleans the raw file, loads it into SQLite, runs every SQL analysis (results
 ├── sql/                             load + 5 analysis scripts + Tableau exports
 ├── notebooks/analysis.ipynb         charts and statistical checks
 ├── outputs/                         SQL results (.txt) and charts (charts/*.png)
-├── tableau/                         build guide and the original 2024 dashboard
+├── tableau/                         dashboard screenshots, mockup, build walkthrough, original 2024 dashboard
 ├── requirements.txt
 └── run_all.sh
 ```

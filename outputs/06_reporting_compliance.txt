@@ -8,9 +8,9 @@ Unknown           21         0.0   0.3
 recipient_type         donations  over_a_year  pct_over_4_months
 ---------------------  ---------  -----------  -----------------
 Permitted Participant  1024       40           61.3             
-Third Party            204        17           44.1             
-Political Party        56582      296          5.0              
-Regulated Donee        7024       69           3.7              
+Third Party            193        17           46.6             
+Political Party        56577      296          5.0              
+Regulated Donee        7019       69           3.7              
 year  over_a_year
 ----  -----------
 2001  2          

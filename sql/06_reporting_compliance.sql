@@ -12,7 +12,7 @@ FROM donations GROUP BY lag_status ORDER BY donations DESC;
 SELECT recipient_type, count(*) AS donations,
        sum(lag_status = 'Over a year') AS over_a_year,
        round(100.0 * sum(lag_status IN ('4-12 months', 'Over a year')) / count(*), 1) AS pct_over_4_months
-FROM donations WHERE lag_status <> 'Date error' GROUP BY recipient_type ORDER BY pct_over_4_months DESC;
+FROM donations WHERE lag_status NOT IN ('Date error', 'Unknown') GROUP BY recipient_type ORDER BY pct_over_4_months DESC;
 
 -- Donations reported more than a year late, by year of donation
 -- (2018-2019 look low only because the data ends in Sep 2019)

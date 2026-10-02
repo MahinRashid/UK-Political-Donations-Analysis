@@ -89,6 +89,9 @@ compare = pd.DataFrame({
     "Without fix": [(naive_lag < 0).sum(), (naive_lag > 365).sum()],
     "With fix": [(d.report_lag_days < 0).sum(), (d.report_lag_days > 365).sum()],
 }, index=["Reported before donated (impossible)", "Reported over a year late"])
+# Small table for the Tableau "date bug" chart
+pd.DataFrame({"version": ["Dates as Excel read them", "After the fix"],
+              "impossible_records": compare.loc["Reported before donated (impossible)"].values}).to_csv("../tableau/data/date_fix_check.csv", index=False)
 compare
 """)
 
@@ -260,7 +263,7 @@ plt.show()
 md("## 7. Is the reporting system working?")
 
 code("""
-ok = d[d.lag_status != "Date error"]
+ok = d[~d.lag_status.isin(["Date error", "Unknown"])]
 late = (ok.assign(late=ok.lag_status.isin(["4-12 months", "Over a year"]))
           .groupby("recipient_type").late.mean().sort_values())
 fig, ax = plt.subplots(figsize=(8, 3.0))

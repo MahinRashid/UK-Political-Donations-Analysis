@@ -7,8 +7,12 @@ Donation value is £0,6,Kept (mostly aggregated or returned entries); they do no
 Same donor spelled several ways,18815,Merged 942 donors by normalised name
 Same donor under several DonorIds,5208,Did not use DonorId as a donor key
 DonorName missing,85,Labelled 'Unknown donor'
+DonorStatus missing,58,Labelled 'Unknown'
+"Optional fields blank where they don't apply (CampaigningName, DonationAction, PurposeOfVisit, RegulatedDoneeType, NatureOfDonation, CompanyRegistrationNumber, AccountingUnitId, AccountingUnitName, IsReportedPrePoll)",65278,Left blank: not errors (e.g. company number only exists for companies). DonationAction became the is_returned flag
 Public money recorded as donations (e.g. House of Commons 'Short Money'),1726,Flagged is_public_funds; excluded from private-donation analysis
 "Donation returned, forfeited or deferred",283,Flagged is_returned; excluded from accepted totals
 RegisterName missing,1231,Labelled 'Not recorded'
 Postcode missing,30265,"Not used for mapping: missing for half the rows, and often a party HQ address"
+"No accepted, received or reported date",4,"Kept in totals (£55,703); left off time-based charts"
+ReportedDate missing,21,lag_status = 'Unknown'; excluded from reporting-delay figures
 Reported before the donation date,444,Flagged lag_status = 'Date error'; excluded from lag statistics

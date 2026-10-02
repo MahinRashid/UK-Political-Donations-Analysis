@@ -4,3 +4,4 @@ donations.db
 data/clean/donations_clean.csv
 tableau/data/
 .ipynb_checkpoints/
+tableau/mockups/
