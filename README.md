@@ -220,7 +220,6 @@ Two interactive dashboards on [Tableau Public](https://public.tableau.com/app/pr
 
 ![Can the donations data be trusted, light mode](tableau/screenshots/2_trust_light.png)
 </details>
-- Planned first as a mockup ([`tableau/dashboard_blueprint.html`](tableau/dashboard_blueprint.html)) and built from a step-by-step guide ([`tableau/build_walkthrough.html`](tableau/build_walkthrough.html)). Download either file and open it in a browser.
 
 ## How to run
 
@@ -243,7 +242,7 @@ This cleans the raw file, loads it into SQLite, runs every SQL analysis (results
 ├── sql/                             load + 5 analysis scripts + Tableau exports
 ├── notebooks/analysis.ipynb         charts and statistical checks
 ├── outputs/                         SQL results (.txt) and charts (charts/*.png)
-├── tableau/                         dashboard screenshots, mockup, build walkthrough, original 2024 dashboard
+├── tableau/                         dashboard screenshots and the original 2024 dashboard
 ├── requirements.txt
 └── run_all.sh
 ```
